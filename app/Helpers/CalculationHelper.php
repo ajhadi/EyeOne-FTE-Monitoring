@@ -78,8 +78,8 @@ class CalculationHelper
         $hourPerWeeks =  JamKerja::MINGGU->totalJam() * $vendor['members_per_team'] *  $vendor['team_count'];
         $hourPerMonths =  JamKerja::BULAN->totalJam() * $vendor['members_per_team'] *  $vendor['team_count'];
 
-        $indexWeeks = $total / $hourPerWeeks;
-        $indexMonths = $total / $hourPerMonths;
+        $indexWeeks = ($hourPerWeeks > 0) ? $total / $hourPerWeeks : 0;
+        $indexMonths = ($hourPerMonths > 0) ? $total / $hourPerMonths : 0;
 
         $weekAnalisa =  'MASA PESIAPAN';
         $monthAnalisa =  'MASA PESIAPAN';
