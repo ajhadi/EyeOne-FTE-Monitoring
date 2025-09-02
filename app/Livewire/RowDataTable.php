@@ -46,14 +46,15 @@ class RowDataTable extends DataTableComponent
             'v.code as vendor_code',
         ];
 
-        // PA1 - PA7 (berdasarkan created_at) - untuk semua data
+        // PA1 - PA7 (berdasarkan created_at project) - kumulatif dari hari 1 sampai hari ke-i
         for ($i = 0; $i < 7; $i++) {
-            $date = $startDate->copy()->addDays($i)->toDateString();
-            $selects[] = DB::raw("SUM(CASE WHEN DATE(pu.created_at) = '{$date}' THEN 1 ELSE 0 END) as PA" . ($i + 1));
+            $endDay = $startDate->copy()->addDays($i)->toDateString();
+            $startDay = $startDate->toDateString();
+            $selects[] = DB::raw("SUM(CASE WHEN DATE(p.created_at) BETWEEN '{$startDay}' AND '{$endDay}' THEN 1 ELSE 0 END) as PA" . ($i + 1));
         }
 
-        // Total Update Dispos - untuk semua data
-        $selects[] = DB::raw("SUM(CASE WHEN DATE(p.disposition_date) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN 1 ELSE 0 END) as total_update_dispos");
+        // Total Update Dispos - berdasarkan created_at project dari hari 1 sampai hari 7
+        $selects[] = DB::raw("SUM(CASE WHEN DATE(p.created_at) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN 1 ELSE 0 END) as total_update_dispos");
 
         // Month & Week info
         $selects[] = DB::raw("MONTH('{$startDate->toDateString()}') as month_number");
