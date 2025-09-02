@@ -10,13 +10,11 @@ use Livewire\Component;
 class MainDashboard extends Component
 {
     public string $vendorNameFilter = '';
-    public string $vendorZoneFilter = '';
     public string $monthAnalisaFilter = '';  // <-- ini untuk pilihan dropdown
     public string $weekAnalisaFilter = '';  // <-- ini untuk pilihan dropdown
 
 
     public string $vendorName = '';
-    public string $zoneName = '';
     public string $monthAnalisa = '';
     public string $weekAnalisa = '';
 
@@ -33,7 +31,6 @@ class MainDashboard extends Component
     public function filter()
     {
         $this->vendorName = $this->vendorNameFilter;
-        $this->zoneName = $this->vendorZoneFilter;
         $this->monthAnalisa = $this->monthAnalisaFilter;
         $this->weekAnalisa = $this->weekAnalisaFilter;
     }
@@ -43,9 +40,6 @@ class MainDashboard extends Component
         $vendors = Vendor::query()
             ->when($this->vendorName, function ($query) {
                 $query->where('name', 'like', $this->vendorName . '%');
-            })
-            ->when($this->zoneName, function ($query) {
-                $query->where('zone', 'like', '%' . $this->zoneName . '%');
             })
             ->withCount('projects')
             ->withCount([

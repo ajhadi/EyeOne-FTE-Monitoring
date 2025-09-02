@@ -22,8 +22,6 @@ class DashboardTable extends DataTableComponent
                 ->sortable(),
             Column::make("Nama Perusahaan", "companyName")
                 ->sortable(),
-            Column::make("Wilayah Kerja", "jobArea")
-                ->sortable(),
             Column::make("Jumlah Tim", "numberofTeam")
                 ->sortable(),
             Column::make("Orang(s)", "people")
