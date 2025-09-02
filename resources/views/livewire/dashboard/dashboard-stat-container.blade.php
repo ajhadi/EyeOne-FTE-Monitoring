@@ -16,20 +16,18 @@ mount(function () {
     $this->total_vendor = Vendor::count();
     $this->total_active_project = Project::whereNot('type', StatusPekerjaan::CLOSED->value)->count();
     
-    // Hitung project yang bermasalah: group by project_id, exclude jika ada status 26, 34, 35
-    $this->total_problem = ProjectUpdate::select('project_id')
-        ->groupBy('project_id')
-        ->whereNotExists(function ($query) {
-            $query->select(\DB::raw(1))
-                ->from('project_updates as pu2')
-                ->whereColumn('pu2.project_id', 'project_updates.project_id')
-                ->whereIn('pu2.problem_status', [
+    // Hitung project yang bermasalah: exclude project yang punya status 26, 34, 35
+    $this->total_problem = ProjectUpdate::selectRaw('COUNT(DISTINCT project_id)')
+        ->whereNotIn('project_id', function ($query) {
+            $query->select('project_id')
+                ->from('project_updates')
+                ->whereIn('problem_status', [
                     TipeKendala::TIDAK_ADA_KENDALA->value, // 26
                     TipeKendala::CLOSED->value,            // 34
                     TipeKendala::CANCELLED->value          // 35
                 ]);
         })
-        ->count();
+        ->value('COUNT(DISTINCT project_id)');
 });
 ?>
 <div class="relative items-end overflow-hidden rounded-xl border bg-white border-neutral-200 dark:border-neutral-700 p-5">
