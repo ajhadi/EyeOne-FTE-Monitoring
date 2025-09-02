@@ -50,11 +50,11 @@ class RowDataTable extends DataTableComponent
         for ($i = 0; $i < 7; $i++) {
             $endDay = $startDate->copy()->addDays($i)->toDateString();
             $startDay = $startDate->toDateString();
-            $selects[] = DB::raw("SUM(CASE WHEN DATE(p.created_at) BETWEEN '{$startDay}' AND '{$endDay}' THEN 1 ELSE 0 END) as PA" . ($i + 1));
+            $selects[] = DB::raw("COUNT(DISTINCT CASE WHEN DATE(p.created_at) BETWEEN '{$startDay}' AND '{$endDay}' THEN p.id END) as PA" . ($i + 1));
         }
 
         // Total Update Dispos - berdasarkan created_at project dari hari 1 sampai hari 7
-        $selects[] = DB::raw("SUM(CASE WHEN DATE(p.created_at) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN 1 ELSE 0 END) as total_update_dispos");
+        $selects[] = DB::raw("COUNT(DISTINCT CASE WHEN DATE(p.created_at) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN p.id END) as total_update_dispos");
 
         // Month & Week info
         $selects[] = DB::raw("MONTH('{$startDate->toDateString()}') as month_number");
