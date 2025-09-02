@@ -27,8 +27,8 @@ class RowDataTable extends DataTableComponent
             'style' => 'color: #000000',
         ]);
 
-        // Set default sorting by Total Update (descending)
-        $this->setDefaultSort('total_update', 'desc');
+        // Set default sorting by Total Update Dispos (descending)
+        $this->setDefaultSort('total_update_dispos', 'desc');
     }
 
     public function builder(): Builder
@@ -61,19 +61,19 @@ class RowDataTable extends DataTableComponent
         $selects[] = DB::raw("'{$startDate->toDateString()}' as start_date_week");
         $selects[] = DB::raw("'{$endDate->toDateString()}' as end_date_week");
 
-        // Day1 - Day7 (berdasarkan pu.date) - untuk semua data
+        // Day1 - Day7 (berdasarkan DATE(created_at) dari project_updates) - untuk semua data
         for ($i = 0; $i < 7; $i++) {
             $date = $startDate->copy()->addDays($i)->toDateString();
-            $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND date = '{$date}') as Day" . ($i + 1));
+            $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND DATE(created_at) = '{$date}') as Day" . ($i + 1));
         }
 
-        // Total Update - untuk semua data 
-        $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}') as total_update");
+        // Total Update - berdasarkan DATE(created_at) dari project_updates
+        $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND DATE(created_at) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}') as total_update");
 
         // Query langsung ke vendors dengan subquery
         return Vendor::query()
             ->select($selects)
-            ->orderBy(DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}')"), 'desc')
+            ->orderBy(DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}')"), 'desc')
             ->orderBy('code');
     }
 
