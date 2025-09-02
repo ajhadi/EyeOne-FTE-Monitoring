@@ -58,9 +58,6 @@
                         Nama Perusahaan
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Wilayah<br>Kerja
-                    </th>
-                    <th scope="col" class="px-6 py-3">
                         Jumlah<br>Tim
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -89,9 +86,6 @@
                         </th>
                         <td class="px-6 py-4">
                             {{ $vendor->name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $vendor->zone }}
                         </td>
                         <td class="px-6 py-4">
                             {{ $vendor->team_count }}
