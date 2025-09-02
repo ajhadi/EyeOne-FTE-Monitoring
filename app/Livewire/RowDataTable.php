@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\ProjectUpdate;
+use App\Models\Vendor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RowDataTable extends DataTableComponent
 {
-    protected $model = ProjectUpdate::class;
+    protected $model = Vendor::class;
 
     /**
      * @inheritDoc
@@ -69,13 +70,13 @@ class RowDataTable extends DataTableComponent
         // Total Update - untuk semua data 
         $selects[] = DB::raw("SUM(CASE WHEN pu.date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN 1 ELSE 0 END) as total_update");
 
-        // Query utama - TANPA WHERE date filter agar mengambil semua data
-        return ProjectUpdate::query()
-            ->from('project_updates as pu')
-            ->join('vendors as v', 'pu.vendor_id', '=', 'v.id')
-            ->join('projects as p', 'pu.project_id', '=', 'p.id')
+        // Query dengan LEFT JOIN untuk menampilkan semua vendor
+        return Vendor::query()
+            ->from('vendors as v')
+            ->leftJoin('project_updates as pu', 'v.id', '=', 'pu.vendor_id')
+            ->leftJoin('projects as p', 'pu.project_id', '=', 'p.id')
             ->select($selects)
-            ->groupBy('v.code')
+            ->groupBy('v.id', 'v.code')
             ->orderBy(DB::raw('SUM(CASE WHEN pu.date BETWEEN \'' . $startDate->toDateString() . '\' AND \'' . $endDate->toDateString() . '\' THEN 1 ELSE 0 END)'), 'desc')
             ->orderBy('v.code');
     }
