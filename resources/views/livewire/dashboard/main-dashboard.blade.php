@@ -3,16 +3,11 @@
         <h1>Welcome to, Monitoring FTE!</h1>
     </div>
     <div class="relative overflow-hidden rounded-xl border bg-white border-neutral-200 dark:border-neutral-700 p-5">
-        <div class="grid grid-cols-5 gap-4 items-end">
+        <div class="grid grid-cols-4 gap-4 items-end">
             <flux:field>
                 <flux:label>Company</flux:label>
                 <!-- pakai defer supaya tidak tiap ketik mengirim request -->
                 <flux:input wire:model.defer="vendorNameFilter" placeholder="Cari perusahaan..." />
-            </flux:field>
-
-            <flux:field>
-                <flux:label>Work Area</flux:label>
-                <flux:input wire:model.defer="vendorZoneFilter" placeholder="Cari zona..." />
             </flux:field>
 
             <flux:field>
