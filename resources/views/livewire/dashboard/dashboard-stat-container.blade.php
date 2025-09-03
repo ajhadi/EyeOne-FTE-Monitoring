@@ -4,6 +4,7 @@ use App\Models\Vendor;
 use App\Models\Project;
 use App\Models\ProjectUpdate;
 use App\Enums\StatusPekerjaan;
+use App\Enums\TipeKendala;
 
 state([
     'total_vendor' => 0,
@@ -14,7 +15,19 @@ state([
 mount(function () {
     $this->total_vendor = Vendor::count();
     $this->total_active_project = Project::whereNot('type', StatusPekerjaan::CLOSED->value)->count();
-    $this->total_problem = ProjectUpdate::count();
+    
+    // Hitung project yang bermasalah: exclude project yang punya status 26, 34, 35
+    $this->total_problem = ProjectUpdate::selectRaw('COUNT(DISTINCT project_id)')
+        ->whereNotIn('project_id', function ($query) {
+            $query->select('project_id')
+                ->from('project_updates')
+                ->whereIn('problem_status', [
+                    TipeKendala::TIDAK_ADA_KENDALA->value, // 26
+                    TipeKendala::CLOSED->value,            // 34
+                    TipeKendala::CANCELLED->value          // 35
+                ]);
+        })
+        ->value('COUNT(DISTINCT project_id)');
 });
 ?>
 <div class="relative items-end overflow-hidden rounded-xl border bg-white border-neutral-200 dark:border-neutral-700 p-5">

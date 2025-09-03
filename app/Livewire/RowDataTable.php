@@ -27,8 +27,8 @@ class RowDataTable extends DataTableComponent
             'style' => 'color: #000000',
         ]);
 
-        // Set default sorting by Total Update (descending)
-        $this->setDefaultSort('total_update', 'desc');
+        // Set default sorting by Total Update Dispos (descending)
+        $this->setDefaultSort('total_update_dispos', 'desc');
     }
 
     public function builder(): Builder
@@ -43,17 +43,17 @@ class RowDataTable extends DataTableComponent
         $endDate = $today->copy()->endOfWeek(Carbon::SUNDAY);
 
         $selects = [
-            'v.code as vendor_code',
+            'vendors.code as vendor_code',
         ];
 
-        // PA1 - PA7 (berdasarkan created_at) - untuk semua data
+        // PA1 - PA7 (berdasarkan disposition_date project) - kumulatif sampai hari ke-i
         for ($i = 0; $i < 7; $i++) {
-            $date = $startDate->copy()->addDays($i)->toDateString();
-            $selects[] = DB::raw("SUM(CASE WHEN DATE(pu.created_at) = '{$date}' THEN 1 ELSE 0 END) as PA" . ($i + 1));
+            $endDay = $startDate->copy()->addDays($i)->toDateString();
+            $selects[] = DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date <= '{$endDay}') as PA" . ($i + 1));
         }
 
-        // Total Update Dispos - untuk semua data
-        $selects[] = DB::raw("SUM(CASE WHEN DATE(p.disposition_date) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN 1 ELSE 0 END) as total_update_dispos");
+        // Total Update Dispos - berdasarkan disposition_date project dari hari 1 sampai hari 7
+        $selects[] = DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}') as total_update_dispos");
 
         // Month & Week info
         $selects[] = DB::raw("MONTH('{$startDate->toDateString()}') as month_number");
@@ -61,24 +61,20 @@ class RowDataTable extends DataTableComponent
         $selects[] = DB::raw("'{$startDate->toDateString()}' as start_date_week");
         $selects[] = DB::raw("'{$endDate->toDateString()}' as end_date_week");
 
-        // Day1 - Day7 (berdasarkan pu.date) - untuk semua data
+        // Day1 - Day7 (berdasarkan DATE(created_at) dari project_updates) - untuk semua data
         for ($i = 0; $i < 7; $i++) {
             $date = $startDate->copy()->addDays($i)->toDateString();
-            $selects[] = DB::raw("SUM(CASE WHEN pu.date = '{$date}' THEN 1 ELSE 0 END) as Day" . ($i + 1));
+            $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND DATE(created_at) = '{$date}') as Day" . ($i + 1));
         }
 
-        // Total Update - untuk semua data 
-        $selects[] = DB::raw("SUM(CASE WHEN pu.date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}' THEN 1 ELSE 0 END) as total_update");
+        // Total Update - berdasarkan DATE(created_at) dari project_updates
+        $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND DATE(created_at) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}') as total_update");
 
-        // Query dengan LEFT JOIN untuk menampilkan semua vendor
+        // Query langsung ke vendors dengan subquery
         return Vendor::query()
-            ->from('vendors as v')
-            ->leftJoin('project_updates as pu', 'v.id', '=', 'pu.vendor_id')
-            ->leftJoin('projects as p', 'pu.project_id', '=', 'p.id')
             ->select($selects)
-            ->groupBy('v.id', 'v.code')
-            ->orderBy(DB::raw('SUM(CASE WHEN pu.date BETWEEN \'' . $startDate->toDateString() . '\' AND \'' . $endDate->toDateString() . '\' THEN 1 ELSE 0 END)'), 'desc')
-            ->orderBy('v.code');
+            ->orderBy(DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}')"), 'desc')
+            ->orderBy('code');
     }
 
     public function columns(): array
@@ -147,10 +143,21 @@ class RowDataTable extends DataTableComponent
             Column::make("Total Days in a Week")
                 ->label(fn($row) => 7),
             Column::make("Percentage")
-                ->label(fn($row) => $row->total_update > 0
-                    ? round(($row->total_update_dispos / $row->total_update) * 100, 2) . '%'
-                    : '0%'
-                )
+                ->label(function($row) {
+                    $percentageSum = 0;
+                    
+                    for ($i = 1; $i <= 7; $i++) {
+                        $dayValue = $row->{"Day$i"};
+                        $paValue = $row->{"PA$i"};
+                        
+                        if ($paValue > 0) {
+                            $percentageSum += ($dayValue / $paValue);
+                        }
+                    }
+                    
+                    $averagePercentage = ($percentageSum / 7) * 100;
+                    return round($averagePercentage, 2) . '%';
+                })
                 ->sortable(),
         ];
     }
