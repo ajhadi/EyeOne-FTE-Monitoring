@@ -143,10 +143,21 @@ class RowDataTable extends DataTableComponent
             Column::make("Total Days in a Week")
                 ->label(fn($row) => 7),
             Column::make("Percentage")
-                ->label(fn($row) => $row->total_update > 0
-                    ? round(($row->total_update_dispos / $row->total_update) * 100, 2) . '%'
-                    : '0%'
-                )
+                ->label(function($row) {
+                    $percentageSum = 0;
+                    
+                    for ($i = 1; $i <= 7; $i++) {
+                        $dayValue = $row->{"Day$i"};
+                        $paValue = $row->{"PA$i"};
+                        
+                        if ($paValue > 0) {
+                            $percentageSum += ($dayValue / $paValue);
+                        }
+                    }
+                    
+                    $averagePercentage = ($percentageSum / 7) * 100;
+                    return round($averagePercentage, 2) . '%';
+                })
                 ->sortable(),
         ];
     }
