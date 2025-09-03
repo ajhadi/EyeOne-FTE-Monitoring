@@ -81,22 +81,22 @@ class CalculationHelper
         $indexWeeks = ($hourPerWeeks > 0) ? $total / $hourPerWeeks : 0;
         $indexMonths = ($hourPerMonths > 0) ? $total / $hourPerMonths : 0;
 
-        $weekAnalisa =  'MASA PESIAPAN';
-        $monthAnalisa =  'MASA PESIAPAN';
+        $weekAnalisa =  'PREPARATION PERIOD';
+        $monthAnalisa =  'PREPARATION PERIOD';
 
-        // Nilai patokan
+        // Standard reference values
         $g166 = 0.65;
         $g167 = 1.35;
-        $g168 = 1.35; // sama dengan $g167
+        $g168 = 1.35; // same as $g167
 
 
-        // Cek sesuai urutan logika Excel
+        // Check according to Excel logic order
         if (!is_null($indexWeeks)) {
             if ($indexWeeks <= $g166) { // 0.036 <= 0.65 -> TRUE
-                $weekAnalisa = "UNDERLOAD"; // Kode ini yang akan dieksekusi
-            } elseif ($indexWeeks <= $g167) { // Ini tidak akan dicek
+                $weekAnalisa = "UNDERLOAD"; // This code will be executed
+            } elseif ($indexWeeks <= $g167) { // This will not be checked
                 $weekAnalisa = "FIT";
-            } elseif ($indexWeeks > $g168) { // Ini juga tidak akan dicek
+            } elseif ($indexWeeks > $g168) { // This will also not be checked
                 $weekAnalisa = "OVERLOAD";
             }
         }

@@ -3,7 +3,7 @@
 use App\Models\Project;
 use function Livewire\Volt\{state, usesPagination, mount, with};
 
-// Aktifkan pagination
+// Enable pagination
 usesPagination();
 
 // Simpan ID vendor ke dalam state
@@ -13,7 +13,7 @@ mount(function (int $id) {
     $this->vendor = \App\Models\Vendor::find($id);
 });
 
-// Ambil project yang sesuai vendor ID dan paginasi
+// Get projects matching vendor ID and paginate
 with(fn() => [
     'projects' => Project::where('vendor_id', $this->vendor->id)
         ->orderBy('id', 'desc')

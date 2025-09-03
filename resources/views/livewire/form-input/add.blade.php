@@ -38,13 +38,13 @@ new class extends Component {
 
 
 
-        // reset project_id jika vendor berubah
+        // reset project_id if vendor changes
 //        $this->project_id = null;
     }
 
     public function updatedProjectId($value): void
     {
-        // Ambil ProjectUpdate terbaru berdasarkan 'date' (urut descending, ambil 1)
+        // Get latest ProjectUpdate based on 'date' (sort descending, take 1)
         $latestUpdate = ProjectUpdate::where('project_id', $value)
             ->latest()
             ->first();
@@ -53,7 +53,7 @@ new class extends Component {
             $this->estimated_pull = $latestUpdate->estimated_pull - $latestUpdate->actual_pull;
             $this->estimated_tracing = $latestUpdate->estimated_tracing - $latestUpdate->actual_tracing;
         } else {
-            // Jika tidak ada data, set 0 atau null sesuai kebutuhan
+            // If no data exists, set to 0 or null as needed
             $this->estimated_pull = 0;
             $this->estimated_tracing = 0;
         }
@@ -91,7 +91,7 @@ new class extends Component {
             ->exists();
 
         if ($exists) {
-            // Jika sudah ada, set estimated_pull dan estimated_tracing jadi 0
+            // If already exists, set estimated_pull and estimated_tracing to 0
             $validated['estimated_pull'] = 0;
             $validated['estimated_tracing'] = 0;
         }

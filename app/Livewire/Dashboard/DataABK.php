@@ -26,7 +26,7 @@ class DataABK extends Component
             ->pluck('total', 'type') // hasil: ['open' => 10, 'survey' => 5, ...]
             ->toArray();
 
-        // Set default 0 kalau tidak ada datanya
+        // Set default 0 if no data exists
         $this->open     = $counts[StatusPekerjaan::OPEN->value]     ?? 0;
         $this->survey   = $counts[StatusPekerjaan::SURVEY->value]   ?? 0;
         $this->foc      = $counts[StatusPekerjaan::FOC->value]      ?? 0;

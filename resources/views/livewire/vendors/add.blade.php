@@ -55,7 +55,7 @@ new class extends Component {
                 ->values()
                 ->all();
 
-            // Jika tidak ada detail error, masukkan title saja
+            // If no error details, insert title only
             if (empty($this->errorMessages)) {
                 $this->errorMessages = [$this->errorTitle];
             }

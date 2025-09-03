@@ -10,8 +10,8 @@ use Livewire\Component;
 class MainDashboard extends Component
 {
     public string $vendorNameFilter = '';
-    public string $monthAnalisaFilter = '';  // <-- ini untuk pilihan dropdown
-    public string $weekAnalisaFilter = '';  // <-- ini untuk pilihan dropdown
+    public string $monthAnalisaFilter = '';  // for dropdown selection
+    public string $weekAnalisaFilter = '';  // for dropdown selection
 
 
     public string $vendorName = '';
@@ -98,16 +98,16 @@ class MainDashboard extends Component
 //        }
 //        dd();
 
-        // tambahkan kolom custom di setiap item
+        // add custom column to each item
        $vendors->transform(function ($vendor) {
-            // contoh hitung total remaining
+            // calculate total remaining
 //           if($vendor->id == 2) dd($vendor->toArray());
             $vendor->calculation = CalculationHelper::AnalisaFTE($vendor->toArray());
 
             return $vendor;
         });
 
-        // Filter collection by monthAnalisaFilter jika ada isinya
+        // Filter collection by monthAnalisaFilter if not empty
         if ($this->monthAnalisa) {
             $vendors = $vendors->filter(fn($vendor) =>
                 isset($vendor->calculation['month_analisa'])

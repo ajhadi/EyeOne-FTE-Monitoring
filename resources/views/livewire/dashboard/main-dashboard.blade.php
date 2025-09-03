@@ -6,17 +6,17 @@
         <div class="grid grid-cols-4 gap-4 items-end">
             <flux:field>
                 <flux:label>Company</flux:label>
-                <!-- pakai defer supaya tidak tiap ketik mengirim request -->
+                <!-- use defer so it doesn't send request on every keystroke -->
                 <flux:input wire:model.defer="vendorNameFilter" placeholder="Cari perusahaan..." />
             </flux:field>
 
             <flux:field>
                 <flux:label>Status For Week</flux:label>
-                <!-- pakai defer supaya tidak tiap ketik mengirim request -->
+                <!-- use defer so it doesn't send request on every keystroke -->
 
                 <flux:select placeholder="Choose week analisa..." wire:model.defer="weekAnalisaFilter">
-                    <flux:select.option value="">-- All --</flux:select.option> <!-- opsional, untuk reset filter -->
-                    <flux:select.option>MASA PESIAPAN</flux:select.option>
+                    <flux:select.option value="">-- All --</flux:select.option> <!-- optional, for filter reset -->
+                    <flux:select.option>PREPARATION PERIOD</flux:select.option>
                     <flux:select.option>UNDERLOAD</flux:select.option>
                     <flux:select.option>FIT</flux:select.option>
                     <flux:select.option>OVERLOAD</flux:select.option>
@@ -25,11 +25,11 @@
 
             <flux:field>
                 <flux:label>Status For Month</flux:label>
-                <!-- pakai defer supaya tidak tiap ketik mengirim request -->
+                <!-- use defer so it doesn't send request on every keystroke -->
 
                 <flux:select placeholder="Choose month analisa..." wire:model.defer="monthAnalisaFilter">
-                    <flux:select.option value="">-- All --</flux:select.option> <!-- opsional, untuk reset filter -->
-                    <flux:select.option>MASA PESIAPAN</flux:select.option>
+                    <flux:select.option value="">-- All --</flux:select.option> <!-- optional, for filter reset -->
+                    <flux:select.option>PREPARATION PERIOD</flux:select.option>
                     <flux:select.option>UNDERLOAD</flux:select.option>
                     <flux:select.option>FIT</flux:select.option>
                     <flux:select.option>OVERLOAD</flux:select.option>

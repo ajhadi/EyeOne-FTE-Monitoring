@@ -25,7 +25,7 @@ class ProjectFactory extends Factory
         $year = now()->year;
         $month = now()->format('m');
 
-        // generate tanggal acak yang valid untuk disposition dan target
+        // generate valid random dates for disposition and target
         $dispositionDate = $this->faker->dateTimeBetween('-2 months', 'now');
         $targetDate = $this->faker->dateTimeBetween($dispositionDate, '+2 months');
 

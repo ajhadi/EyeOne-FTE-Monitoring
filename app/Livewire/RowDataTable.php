@@ -33,26 +33,26 @@ class RowDataTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        // Ambil tanggal hari ini
+        // Get today's date
         $today = Carbon::today();
 
-        // Ambil awal minggu (Senin)  
+        // Get week start (Monday)  
         $startDate = $today->copy()->startOfWeek(Carbon::MONDAY);
 
-        // Ambil akhir minggu (Minggu)
+        // Get week end (Sunday)
         $endDate = $today->copy()->endOfWeek(Carbon::SUNDAY);
 
         $selects = [
             'vendors.code as vendor_code',
         ];
 
-        // PA1 - PA7 (berdasarkan disposition_date project) - kumulatif sampai hari ke-i
+        // PA1 - PA7 (based on project disposition_date) - cumulative up to day i
         for ($i = 0; $i < 7; $i++) {
             $endDay = $startDate->copy()->addDays($i)->toDateString();
             $selects[] = DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date <= '{$endDay}') as PA" . ($i + 1));
         }
 
-        // Total Update Dispos - berdasarkan disposition_date project dari hari 1 sampai hari 7
+        // Total Update Dispos - based on project disposition_date from day 1 to day 7
         $selects[] = DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}') as total_update_dispos");
 
         // Month & Week info
@@ -61,16 +61,16 @@ class RowDataTable extends DataTableComponent
         $selects[] = DB::raw("'{$startDate->toDateString()}' as start_date_week");
         $selects[] = DB::raw("'{$endDate->toDateString()}' as end_date_week");
 
-        // Day1 - Day7 (berdasarkan DATE(created_at) dari project_updates) - untuk semua data
+        // Day1 - Day7 (based on DATE(created_at) from project_updates) - for all data
         for ($i = 0; $i < 7; $i++) {
             $date = $startDate->copy()->addDays($i)->toDateString();
             $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND DATE(created_at) = '{$date}') as Day" . ($i + 1));
         }
 
-        // Total Update - berdasarkan DATE(created_at) dari project_updates
+        // Total Update - based on DATE(created_at) from project_updates
         $selects[] = DB::raw("(SELECT COUNT(*) FROM project_updates WHERE vendor_id = vendors.id AND DATE(created_at) BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}') as total_update");
 
-        // Query langsung ke vendors dengan subquery
+        // Direct query to vendors with subquery
         return Vendor::query()
             ->select($selects)
             ->orderBy(DB::raw("(SELECT COUNT(*) FROM projects WHERE vendor_id = vendors.id AND disposition_date BETWEEN '{$startDate->toDateString()}' AND '{$endDate->toDateString()}')"), 'desc')

@@ -104,10 +104,10 @@ class ProjectUpdateTable extends DataTableComponent
                     $first = $row->first_estimated_pull ?? 0;
                     $sumBefore = $row->sum_actual_pull_before ?? 0;
 
-                    // Kurangi estimated pertama dengan sum actual pull sebelumnya
+                    // Subtract first estimated with sum of previous actual pull
                     $result = $first - $sumBefore;
 
-                    // Kalau negative, kasih 0 saja
+                    // If negative, set to 0
                     return max(0, $result);
                 }),
 
@@ -123,10 +123,10 @@ class ProjectUpdateTable extends DataTableComponent
                     $first = $row->first_estimated_tracing ?? 0;
                     $sumBefore = $row->sum_actual_tracing_before ?? 0;
 
-                    // Kurangi estimated pertama dengan sum actual pull sebelumnya
+                    // Subtract first estimated with sum of previous actual tracing
                     $result = $first - $sumBefore;
 
-                    // Kalau negative, kasih 0 saja
+                    // If negative, set to 0
                     return max(0, $result);
                 }),
             Column::make("Real Tracing", "actual_tracing")

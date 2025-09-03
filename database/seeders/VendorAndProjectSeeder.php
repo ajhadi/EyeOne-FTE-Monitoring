@@ -15,7 +15,7 @@ class VendorAndProjectSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat 5 vendor, masing-masing dengan 3 proyek
+        // Create 5 vendors, each with 3 projects
         Vendor::factory()
             ->count(20)
             ->create()
@@ -28,7 +28,7 @@ class VendorAndProjectSeeder extends Seeder
                     ProjectUpdate::factory()->count(3)->create([
                         'project_id' => $project->id,
                         'vendor_id' => $vendor->id,
-                        'date' => now()->addDays(rand(1, 10))->format('Y-m-d'), // atau sesuaikan logikanya
+                        'date' => now()->addDays(rand(1, 10))->format('Y-m-d'), // or adjust the logic
                     ]);
                 }
             });
@@ -43,6 +43,6 @@ class VendorAndProjectSeeder extends Seeder
 //    ProjectUpdate::factory()->count(100)->create([
 //        'project_id' => $project->id,
 //        'vendor_id' => $project->vendor_id,
-//        'date' => now()->addDays(rand(1, 10))->format('Y-m-d'), // atau sesuaikan logikanya
+//        'date' => now()->addDays(rand(1, 10))->format('Y-m-d'), // or adjust the logic
 //    ]);
 //}

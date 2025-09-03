@@ -1,5 +1,5 @@
 @php
-    $userType = auth()->user()->type; // misal ini cara kamu ambil user type
+    $userType = auth()->user()->type; // example of how to get user type
 @endphp
 
 <!DOCTYPE html>

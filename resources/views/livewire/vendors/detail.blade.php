@@ -12,11 +12,11 @@ state('vendor');
 
 mount(function (int $id) {
     $this->vendor = Vendor::findOrFail($id);
-    $this->form->fillFromVendor($this->vendor); // isi form dari vendor
+    $this->form->fillFromVendor($this->vendor); // fill form from vendor
 });
 
 $save = function () {
-    $this->form->updateVendor($this->vendor); // update data vendor
+    $this->form->updateVendor($this->vendor); // update vendor data
     session()->flash('success', 'Data vendor berhasil diperbarui!');
     $this->dispatch('vendor-updated');
 

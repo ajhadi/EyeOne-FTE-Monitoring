@@ -13,20 +13,20 @@ class QueryController extends Controller
     {
 
 
-// Ambil tanggal hari ini
+// Get today's date
         $today = Carbon::today();
 
-// Ambil awal minggu (Senin)
+// Get week start (Monday)
         $startDate = $today->copy()->startOfWeek(Carbon::MONDAY);
 
-// Ambil akhir minggu (Minggu)
+// Get week end (Sunday)
         $endDate = $today->copy()->endOfWeek(Carbon::SUNDAY);
 
         $selects = [
             'v.code',
         ];
 
-// PA1 - PA7 (berdasarkan created_at)
+// PA1 - PA7 (based on created_at)
         for ($i = 0; $i < 7; $i++) {
             $date = $startDate->copy()->addDays($i)->toDateString();
             $selects[] = DB::raw("SUM(CASE WHEN DATE(pu.created_at) = '{$date}' THEN 1 ELSE 0 END) as PA" . ($i + 1));
@@ -63,13 +63,13 @@ class QueryController extends Controller
     }
 
     public function days(Request $request){
-        // Ambil tanggal hari ini
+        // Get today's date
         $today = Carbon::today();
 
-// Ambil awal minggu (Senin)
+// Get week start (Monday)
         $startDate = $today->copy()->startOfWeek(Carbon::MONDAY);
 
-// Ambil akhir minggu (Minggu)
+// Get week end (Sunday)
         $endDate = $today->copy()->endOfWeek(Carbon::SUNDAY);
 
 
@@ -77,7 +77,7 @@ class QueryController extends Controller
             $q->whereBetween('date', [$startDate, $endDate]);
         })->count();
 
-// Total project yang tidak ada update di minggu ini
+// Total projects without updates this week
         $totalNotUpdate = Project::whereDoesntHave('projectUpdates', function($q) use ($startDate, $endDate) {
             $q->whereBetween('date', [$startDate, $endDate]);
         })->count();

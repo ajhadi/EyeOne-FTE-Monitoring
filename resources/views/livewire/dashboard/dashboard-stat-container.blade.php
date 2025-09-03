@@ -16,7 +16,7 @@ mount(function () {
     $this->total_vendor = Vendor::count();
     $this->total_active_project = Project::whereNot('type', StatusPekerjaan::CLOSED->value)->count();
     
-    // Hitung project yang bermasalah: exclude project yang punya status 26, 34, 35
+    // Calculate problematic projects: exclude projects with status 26, 34, 35
     $this->total_problem = ProjectUpdate::selectRaw('COUNT(DISTINCT project_id)')
         ->whereNotIn('project_id', function ($query) {
             $query->select('project_id')

@@ -18,18 +18,18 @@ class Index extends Component
 
     public function mount()
     {
-        // Ambil tanggal hari ini
+        // Get today's date
         $today = Carbon::today();
-        // Ambil awal minggu (Senin)
+        // Get week start (Monday)
         $startDate = $today->copy()->startOfWeek(Carbon::MONDAY);
-        // Ambil akhir minggu (Minggu)
+        // Get week end (Sunday)
         $endDate = $today->copy()->endOfWeek(Carbon::SUNDAY);
-        // Total project yang ada update di minggu ini
+        // Total projects with updates this week
         $this->totalUpdate = Project::whereHas('projectUpdates', function ($q) use ($startDate, $endDate) {
             $q->whereBetween('date', [$startDate, $endDate]);
         })->count();
 
-        // Total project yang tidak ada update di minggu ini
+        // Total projects without updates this week
         $this->totalNotUpdate = Project::whereDoesntHave('projectUpdates', function ($q) use ($startDate, $endDate) {
             $q->whereBetween('date', [$startDate, $endDate]);
         })->count();
