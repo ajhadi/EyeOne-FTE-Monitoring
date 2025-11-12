@@ -31,7 +31,7 @@ Route::post('login', function (Request $request) {
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->intended('dashboard');
+        return redirect()->intended('/dashboard');
     }
 
     return back()->withErrors([
@@ -45,5 +45,5 @@ Route::post('logout', function (Request $request) {
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     
-    return redirect('/');
+    return redirect('/login');
 })->middleware(['auth'])->name('logout');
