@@ -34,39 +34,16 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Create storage directories FIRST
-RUN mkdir -p storage/framework/cache/data \
-    && mkdir -p storage/framework/sessions \
-    && mkdir -p storage/framework/views \
-    && mkdir -p storage/logs \
-    && mkdir -p bootstrap/cache \
-    && mkdir -p public/build
-
-# Install Node dependencies
-RUN npm ci --only=production
-
-# Build frontend assets with Vite
-RUN npm run build
-
-# Verify build output exists
-RUN ls -la public/build/ || echo "Warning: build directory empty"
+# Install Node dependencies and build assets
+RUN npm install && npm run build
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage \
-    && chmod -R 775 /var/www/bootstrap/cache \
-    && chmod -R 755 /var/www/public
+    && chmod -R 755 /var/www/storage \
+    && chmod -R 755 /var/www/bootstrap/cache
 
 # Expose port (Render uses $PORT variable)
 EXPOSE 8080
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
-  CMD php artisan || exit 1
-
-# Run migrations and start server (with better error handling)
-CMD php artisan migrate --force && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Run migrations and start server
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
