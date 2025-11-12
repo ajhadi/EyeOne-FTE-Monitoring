@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 use App\Livewire\Dashboard;
 use App\Livewire\RowData;
 use Livewire\Volt\Volt;
@@ -10,10 +9,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware([
-    'auth',
-    ValidateSessionWithWorkOS::class,
-])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', Dashboard\MainDashboard::class)->name('dashboard');
     Route::get('dashboard/data-abk', Dashboard\DataABK::class)->name('data-abk');
     Route::get('row-data', RowData\Index::class)->name('row-data');

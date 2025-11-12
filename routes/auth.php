@@ -1,18 +1,49 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Laravel\WorkOS\Http\Requests\AuthKitAuthenticationRequest;
-use Laravel\WorkOS\Http\Requests\AuthKitLoginRequest;
-use Laravel\WorkOS\Http\Requests\AuthKitLogoutRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\User;
 
-Route::get('login', function (AuthKitLoginRequest $request) {
-    return $request->redirect();
+// Login page
+Route::get('login', function () {
+    return view('auth.login');
 })->middleware(['guest'])->name('login');
 
-Route::get('authenticate', function (AuthKitAuthenticationRequest $request) {
-    return tap(to_route('dashboard'), fn () => $request->authenticate());
+// Login process
+Route::post('login', function (Request $request) {
+    $credentials = $request->validate([
+        'username' => 'required',
+        'password' => 'required',
+    ]);
+
+    // Hardcode admin login
+    if ($credentials['username'] === 'admin' && $credentials['password'] === 'admin') {
+        // Get or create admin user
+        $user = User::firstOrCreate(
+            ['email' => 'admin@mail.com'],
+            [
+                'name' => 'Admin',
+                'workos_id' => 'user_admin_default'
+            ]
+        );
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->intended('dashboard');
+    }
+
+    return back()->withErrors([
+        'username' => 'Username atau password salah.',
+    ])->onlyInput('username');
 })->middleware(['guest']);
 
-Route::post('logout', function (AuthKitLogoutRequest $request) {
-    return $request->logout();
+// Logout
+Route::post('logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    
+    return redirect('/');
 })->middleware(['auth'])->name('logout');
