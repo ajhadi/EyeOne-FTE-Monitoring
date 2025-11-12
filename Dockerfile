@@ -45,5 +45,8 @@ RUN chown -R www-data:www-data /var/www \
 # Expose port (Render uses $PORT variable)
 EXPOSE 8080
 
-# Run migrations and start server
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Run migrations, clear config cache, and start server
+CMD php artisan migrate --force && \
+    php artisan config:clear && \
+    php artisan config:cache && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
