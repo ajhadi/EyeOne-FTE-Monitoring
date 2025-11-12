@@ -23,7 +23,15 @@ class AppServiceProvider extends ServiceProvider
         // Force HTTPS in production (fix mixed content)
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
-            URL::forceRootUrl(config('app.url'));
+            
+            // Set APP_URL from environment
+            $appUrl = env('APP_URL');
+            if ($appUrl && str_starts_with($appUrl, 'https://')) {
+                URL::forceRootUrl($appUrl);
+            }
+            
+            // Trust proxies headers
+            request()->server->set('HTTPS', 'on');
         }
     }
 }
