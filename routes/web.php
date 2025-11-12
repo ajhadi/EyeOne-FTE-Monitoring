@@ -1,14 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Livewire\Dashboard;
 use App\Livewire\RowData;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
-    // Redirect ke dashboard jika sudah login, ke login jika belum
-    return Auth::check() ? redirect('/dashboard') : redirect('/login');
+    return view('welcome');
 });
 
 Route::middleware(['auth'])->group(function () {
