@@ -34,13 +34,24 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Install Node dependencies and build assets
-RUN npm install && npm run build
+# Install Node dependencies
+RUN npm install
+
+# Build frontend assets with Vite
+RUN npm run build
+
+# Create storage directories
+RUN mkdir -p storage/framework/cache/data \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs \
+    && mkdir -p bootstrap/cache
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
-    && chmod -R 755 /var/www/bootstrap/cache
+    && chmod -R 755 /var/www/bootstrap/cache \
+    && chmod -R 755 /var/www/public/build
 
 # Expose port (Render uses $PORT variable)
 EXPOSE 8080

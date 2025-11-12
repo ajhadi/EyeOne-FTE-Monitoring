@@ -17,21 +17,28 @@ npm install
 echo "🏗️ Building frontend assets..."
 npm run build
 
-# Clear and optimize Laravel caches
-echo "🔧 Optimizing Laravel..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-echo "✅ Build completed successfully!"
-
-# Create storage directories if not exist
+# Create storage directories BEFORE cache
 echo "📁 Setting up storage directories..."
 mkdir -p storage/framework/cache/data
 mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p storage/logs
 mkdir -p bootstrap/cache
+
+# Clear any existing cache first
+echo "🧹 Clearing old cache..."
+php artisan cache:clear || true
+php artisan config:clear || true
+php artisan route:clear || true
+php artisan view:clear || true
+
+# Then optimize Laravel caches
+echo "🔧 Optimizing Laravel..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+echo "✅ Build completed successfully!"
 
 # Set permissions for Laravel
 echo "🔒 Setting permissions..."

@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: eyeone-fte-monitoring
+    runtime: docker
+    region: singapore
+    plan: free
+    branch: hadi
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: EyeOne
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://eyeone-fte-monitoring.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: WORKOS_CLIENT_ID
+        sync: false
+      - key: WORKOS_API_KEY
+        sync: false
+      - key: WORKOS_REDIRECT_URL
+        value: https://eyeone-fte-monitoring.onrender.com/authenticate
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
+      - key: MAIL_MAILER
+        value: log
